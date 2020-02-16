@@ -1,7 +1,7 @@
 package util
 
-func Max(s []float32, m float32) []float32 {
-	maxSlice := make([]float32, len(s))
+func Max(s []float64, m float64) []float64 {
+	maxSlice := make([]float64, len(s))
 	for idx, v := range s {
 		if m > v {
 			maxSlice[idx] = m
@@ -12,29 +12,29 @@ func Max(s []float32, m float32) []float32 {
 	return maxSlice
 }
 
-func Sum(s []float32) float32 {
-	sum := float32(0)
+func Sum(s []float64) float64 {
+	sum := float64(0)
 	for _, v := range s {
 		sum += v
 	}
 	return sum
 }
 
-func NVals(val float32, n int) []float32 {
-	vals := make([]float32, n)
+func NVals(val float64, n int) []float64 {
+	vals := make([]float64, n)
 	for idx, _ := range vals {
 		vals[idx] = val
 	}
 	return vals
 }
 
-func DivideBy(s []float32, denominator float32) {
+func DivideBy(s []float64, denominator float64) {
 	for idx, x := range s {
 		s[idx] = x / denominator
 	}
 }
 
-func Clamp(s []float32, clampFunc func(float32) bool, clampVal float32) {
+func Clamp(s []float64, clampFunc func(float64) bool, clampVal float64) {
 	for idx, x := range s {
 		if clampFunc(x) {
 			s[idx] = clampVal
@@ -42,8 +42,8 @@ func Clamp(s []float32, clampFunc func(float32) bool, clampVal float32) {
 	}
 }
 
-func Map(s []float32, f func(float32) float32) []float32 {
-	copy := make([]float32, len(s))
+func Map(s []float64, f func(float64) float64) []float64 {
+	copy := make([]float64, len(s))
 	for idx, x := range s {
 		copy[idx] = f(x)
 	}
@@ -62,23 +62,23 @@ func CopyInts(s []int) []int {
 	return MapInts(s, func(x int) int { return x })
 }
 
-func Copy(s []float32) []float32 {
-	return Map(s, func(x float32) float32 { return x })
+func Copy(s []float64) []float64 {
+	return Map(s, func(x float64) float64 { return x })
 }
 
-func AddVectorTo(src []float32, dest []float32) {
+func AddVectorTo(src []float64, dest []float64) {
 	for idx, srcval := range src {
 		dest[idx] += srcval
 	}
 }
 
-func AddTo(srcval float32, dest []float32) {
+func AddTo(srcval float64, dest []float64) {
 	for idx := range dest {
 		dest[idx] += srcval
 	}
 }
 
-func MultBy(srcval float32, dest []float32) {
+func MultBy(srcval float64, dest []float64) {
 	for idx := range dest {
 		dest[idx] *= srcval
 	}

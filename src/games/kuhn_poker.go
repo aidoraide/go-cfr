@@ -36,18 +36,18 @@ func dealCards() (int32, int32) {
 	return d[0], d[1]
 }
 
-func higherCardRegret(p1Card, p2Card kuhnCard, reward float32) (float32, float32) {
+func higherCardRegret(p1Card, p2Card kuhnCard, reward float64) (float64, float64) {
 	if p1Card > p2Card {
 		return -reward, reward // p1 gets negative regret for winning (regret = -reward)
 	}
 	return reward, -reward
 }
 
-func kuhnRegret(p1Card, p2Card kuhnCard, betHistory string) (float32, float32, error) {
+func kuhnRegret(p1Card, p2Card kuhnCard, betHistory string) (float64, float64, error) {
 	if len(betHistory) > 3 {
 		panic(betHistory)
 	}
-	r1, r2 := float32(0), float32(0)
+	r1, r2 := float64(0), float64(0)
 	if betHistory == "pp" {
 		r1, r2 = higherCardRegret(p1Card, p2Card, 1)
 	} else if betHistory == "pbp" {
@@ -109,9 +109,9 @@ func (kh *KuhnPokerHistory) IsTerminal() bool {
 	return err == nil // regret is defined only for terminal states, so if getting regret returns no error then we are terminal
 }
 
-func (kh *KuhnPokerHistory) Value() []float32 {
+func (kh *KuhnPokerHistory) Value() []float64 {
 	p1Regret, p2Regret, _ := kuhnRegret(kh.p1Card, kh.p2Card, kh.betHistory)
-	value := make([]float32, 2)
+	value := make([]float64, 2)
 	value[0] = -p1Regret
 	value[1] = -p2Regret
 	return value

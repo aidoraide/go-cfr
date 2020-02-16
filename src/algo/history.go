@@ -7,6 +7,6 @@ type History interface {
 	InfosetKey() string
 	TakeAction(Action) History
 	IsTerminal() bool
-	Value() []float32 // one value for each player
+	Value() []float64 // one value for each player
 	String() string
 }

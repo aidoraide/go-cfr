@@ -89,7 +89,7 @@ func (dh *dudoHistory) IsTerminal() bool {
 	return len(dh.actionHistory) > 0 && dh.actionHistory[len(dh.actionHistory)-1] == dh.game.dudoAction
 }
 
-func (dh *dudoHistory) Value() []float32 {
+func (dh *dudoHistory) Value() []float64 {
 	if len(dh.actionHistory) == 0 || dh.actionHistory[len(dh.actionHistory)-1] != dh.game.dudoAction {
 		panic(fmt.Errorf("Tried to get value for non terminal state: %s", dh))
 	}
@@ -117,7 +117,7 @@ func (dh *dudoHistory) Value() []float32 {
 		}
 	}
 
-	value := make([]float32, 2)
+	value := make([]float64, 2)
 	if claimCount == actualCount {
 		value[dudoCaller] = -1
 		value[lastClaimant] = 1

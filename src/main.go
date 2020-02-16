@@ -12,7 +12,7 @@ import (
 	"github.com/aidoraide/cfr/src/games/dudo"
 )
 
-var PrintIter = 100000
+var PrintIter = 1000000
 
 func getIterationsFromArgs() int {
 	nIter := 100000
@@ -41,7 +41,10 @@ func main() {
 		utility := model.Train(trainIters)
 		p1DifferenceFromOptimalUtility := math.Abs(dudo.P1OptimalUtility - float64(utility[0]))
 		percentProgress := 100.0 * float64(i+trainIters) / float64(nIters)
-		fmt.Printf("[%6.2f%%] l1loss=%.5f Utility=%v \n", percentProgress, p1DifferenceFromOptimalUtility, utility)
-		// games.PrintKuhnStrategy(model)
+		fmt.Printf("[%6.2f%%] l1loss=%.3e Utility=%v \n", percentProgress, p1DifferenceFromOptimalUtility, utility)
+
+		if i <= nIters/2 && nIters/2 <= i+trainIters {
+			model.ResetAverageStrategy()
+		}
 	}
 }
