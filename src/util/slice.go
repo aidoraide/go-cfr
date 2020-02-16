@@ -50,6 +50,18 @@ func Map(s []float32, f func(float32) float32) []float32 {
 	return copy
 }
 
+func MapInts(s []int, f func(int) int) []int {
+	copy := make([]int, len(s))
+	for idx, x := range s {
+		copy[idx] = f(x)
+	}
+	return copy
+}
+
+func CopyInts(s []int) []int {
+	return MapInts(s, func(x int) int { return x })
+}
+
 func Copy(s []float32) []float32 {
 	return Map(s, func(x float32) float32 { return x })
 }
@@ -70,4 +82,12 @@ func MultBy(srcval float32, dest []float32) {
 	for idx := range dest {
 		dest[idx] *= srcval
 	}
+}
+
+func Range(start, stop, inc int) []int {
+	r := make([]int, (stop-start)/inc)
+	for idx, _ := range r {
+		r[idx] = start + idx*inc
+	}
+	return r
 }

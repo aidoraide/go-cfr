@@ -18,15 +18,15 @@ type KuhnPokerHistory struct {
 
 type KuhnPoker struct{}
 
-var P1 = int32(0)
-var P2 = int32(1)
-var players = []int32{P1, P2}
+var P1 = 0
+var P2 = 1
+var players = []int{P1, P2}
 
-var Pass = int32('p')
-var Bet = int32('b')
+var Pass = algo.Action('p')
+var Bet = algo.Action('b')
 var PassIdx = 0
 var BetIdx = 1
-var ActionSpace = []int32{Pass, Bet}
+var ActionSpace = []algo.Action{Pass, Bet}
 
 var KuhnPokerCards = []int32{1, 2, 3}
 
@@ -66,10 +66,6 @@ func kuhnRegret(p1Card, p2Card kuhnCard, betHistory string) (float32, float32, e
 
 // Fulfill Game interface requirements
 
-func (kn *KuhnPoker) NActions() int32 {
-	return 2
-}
-
 func (kn *KuhnPoker) NewGame() algo.History {
 	p1Card, p2Card := dealCards()
 	return &KuhnPokerHistory{
@@ -79,26 +75,14 @@ func (kn *KuhnPoker) NewGame() algo.History {
 	}
 }
 
-func (kn *KuhnPoker) Value(h algo.History) []float32 {
-	kh, ok := h.(*KuhnPokerHistory)
-	if !ok {
-		panic("KuhnPokerGame was given a History instance for another game")
-	}
-	p1Regret, p2Regret, _ := kuhnRegret(kh.p1Card, kh.p2Card, kh.betHistory)
-	value := make([]float32, 2)
-	value[0] = -p1Regret
-	value[1] = -p2Regret
-	return value
-}
-
-func (kn *KuhnPoker) PlayerSet() []int32 {
+func (kn *KuhnPoker) PlayerSet() []int {
 	return players
 }
 
 // Fulfill History interface requirements
 
-func (kh *KuhnPokerHistory) TurnToAct() int32 {
-	return int32(len(kh.betHistory) % 2)
+func (kh *KuhnPokerHistory) TurnToAct() int {
+	return len(kh.betHistory) % 2
 }
 
 func (kh *KuhnPokerHistory) Infoset() *algo.Infoset {
@@ -112,7 +96,7 @@ func (kh *KuhnPokerHistory) InfosetKey() string {
 	return fmt.Sprintf("%d%s", kh.p2Card, kh.betHistory)
 }
 
-func (kh *KuhnPokerHistory) TakeAction(action int32) algo.History {
+func (kh *KuhnPokerHistory) TakeAction(action algo.Action) algo.History {
 	return &KuhnPokerHistory{
 		p1Card:     kh.p1Card,
 		p2Card:     kh.p2Card,
@@ -123,6 +107,14 @@ func (kh *KuhnPokerHistory) TakeAction(action int32) algo.History {
 func (kh *KuhnPokerHistory) IsTerminal() bool {
 	_, _, err := kuhnRegret(kh.p1Card, kh.p2Card, kh.betHistory)
 	return err == nil // regret is defined only for terminal states, so if getting regret returns no error then we are terminal
+}
+
+func (kh *KuhnPokerHistory) Value() []float32 {
+	p1Regret, p2Regret, _ := kuhnRegret(kh.p1Card, kh.p2Card, kh.betHistory)
+	value := make([]float32, 2)
+	value[0] = -p1Regret
+	value[1] = -p2Regret
+	return value
 }
 
 func (kh *KuhnPokerHistory) String() string {

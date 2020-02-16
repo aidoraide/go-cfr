@@ -7,10 +7,12 @@ import (
 type Infoset struct {
 	regretSums   []float32
 	strategySums []float32
-	actionSpace  []int32
+	actionSpace  []Action
 }
 
-func NewInfoset(actionSpace []int32) *Infoset {
+var epsilon = float32(0.0001)
+
+func NewInfoset(actionSpace []Action) *Infoset {
 	return &Infoset{
 		regretSums:   util.NVals(0, len(actionSpace)),
 		strategySums: util.NVals(0, len(actionSpace)),
@@ -28,7 +30,7 @@ func (is *Infoset) GetStrategy() []float32 {
 	util.DivideBy(strategy, normalizer)
 
 	// Remove small values and renormalize
-	util.Clamp(strategy, func(x float32) bool { return x < 0.001 }, 0)
+	util.Clamp(strategy, func(x float32) bool { return x < epsilon }, 0)
 	util.DivideBy(strategy, util.Sum(strategy))
 	return strategy
 }
@@ -42,10 +44,14 @@ func (is *Infoset) GetAverageStrategy() []float32 {
 		strategy = util.Copy(is.strategySums)
 		util.DivideBy(strategy, normalizer)
 	}
+
+	// Remove small values and renormalize
+	util.Clamp(strategy, func(x float32) bool { return x < epsilon }, 0)
+	util.DivideBy(strategy, util.Sum(strategy))
 	return strategy
 }
 
-func (is *Infoset) GetActionSet() []int32 {
+func (is *Infoset) GetActionSet() []Action {
 	return is.actionSpace
 }
 

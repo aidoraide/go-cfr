@@ -2,16 +2,17 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"math/rand"
 	"os"
 	"strconv"
 	"time"
 
 	"github.com/aidoraide/cfr/src/algo"
-	"github.com/aidoraide/cfr/src/games"
+	"github.com/aidoraide/cfr/src/games/dudo"
 )
 
-var PrintIter = 1000000
+var PrintIter = 100000
 
 func getIterationsFromArgs() int {
 	nIter := 100000
@@ -30,15 +31,17 @@ func main() {
 
 	nIters := getIterationsFromArgs()
 	fmt.Println("Running with nIters = ", nIters)
-	model := algo.NewCFRModel(&games.KuhnPoker{})
+	model := algo.NewCFRModel(dudo.NewDudo(2, 1))
 
 	for i := 0; i < nIters; i += PrintIter {
 		trainIters := nIters - i
 		if trainIters > PrintIter {
 			trainIters = PrintIter
 		}
-		fmt.Printf("[%d, %d]\n", i, i+trainIters)
-		model.Train(trainIters)
-		games.PrintKuhnStrategy(model)
+		utility := model.Train(trainIters)
+		p1DifferenceFromOptimalUtility := math.Abs(dudo.P1OptimalUtility - float64(utility[0]))
+		percentProgress := 100.0 * float64(i+trainIters) / float64(nIters)
+		fmt.Printf("[%6.2f%%] l1loss=%.5f Utility=%v \n", percentProgress, p1DifferenceFromOptimalUtility, utility)
+		// games.PrintKuhnStrategy(model)
 	}
 }

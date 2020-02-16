@@ -7,19 +7,19 @@ import (
 )
 
 type Model interface {
-	Train(nIter int)
+	Train(nIter int) []float32
 	GetStrategy(h History) []float32
 }
 
 type cfrModel struct {
 	game     Game
-	cfr_iter func(h History, player int32, pi []float32) float32
+	cfr_iter func(h History, player int, pi []float32) float32
 	h2I      func(h History) *Infoset
 }
 
-func cfr(h History, player int32, pi []float32, h2I func(h History) *Infoset, game Game) float32 {
+func cfr(h History, player int, pi []float32, h2I func(h History) *Infoset, game Game) float32 {
 	if h.IsTerminal() {
-		value := game.Value(h)
+		value := h.Value()
 		return value[player]
 	}
 
@@ -29,6 +29,9 @@ func cfr(h History, player int32, pi []float32, h2I func(h History) *Infoset, ga
 	actionValues := util.NVals(0, len(actionSet))
 	strategy := infoset.GetStrategy()
 	for actionIdx, a := range actionSet {
+		if strategy[actionIdx] == 0 {
+			continue // Don't explore subtrees with 0 reach probability
+		}
 		ha := h.TakeAction(a)
 		// fmt.Println(pi)
 		pia := util.Copy(pi)
@@ -50,7 +53,7 @@ func cfr(h History, player int32, pi []float32, h2I func(h History) *Infoset, ga
 	return value
 }
 
-func gameWrapCoreFunctions(game Game) (func(h History, player int32, pi []float32) float32, func(h History) *Infoset) {
+func gameWrapCoreFunctions(game Game) (func(h History, player int, pi []float32) float32, func(h History) *Infoset) {
 	h2IMap := map[string]*Infoset{}
 	h2I := func(h History) *Infoset {
 		key := h.InfosetKey()
@@ -62,7 +65,7 @@ func gameWrapCoreFunctions(game Game) (func(h History, player int32, pi []float3
 		return infoset
 	}
 
-	cfr_clean := func(h History, player int32, pi []float32) float32 {
+	cfr_clean := func(h History, player int, pi []float32) float32 {
 		return cfr(h, player, pi, h2I, game)
 	}
 
@@ -78,19 +81,21 @@ func NewCFRModel(game Game) Model {
 	}
 }
 
-func (m *cfrModel) Train(nIter int) {
-	utility := float32(0.0)
+func (m *cfrModel) Train(nIter int) []float32 {
+	playerSet := m.game.PlayerSet()
+	utility := make([]float32, len(playerSet))
 	for i := 0; i < nIter; i++ {
-		for _, player := range m.game.PlayerSet() {
+		for playerIdx, player := range playerSet {
 			h := m.game.NewGame()
-			actionSet := m.h2I(h).GetActionSet()
-			utility += m.cfr_iter(h, player, util.NVals(1.0, len(actionSet)))
+			pi := util.NVals(1.0, len(playerSet))
+			utility[playerIdx] += m.cfr_iter(h, player, pi)
 		}
-		if i%10000 == 0 {
+		if i%1000 == 0 {
 			fmt.Printf("t: %5.1f%s\r", 100*float32(i)/float32(nIter), "%")
 		}
 	}
-	fmt.Println("                                                 ")
+	util.DivideBy(utility, float32(nIter))
+	return utility
 }
 
 func (m *cfrModel) GetStrategy(h History) []float32 {
