@@ -3,7 +3,7 @@ package algo
 import (
 	"fmt"
 
-	"github.com/aidoraide/cfr/src/util"
+	"github.com/aidoraide/go-cfr/src/util"
 )
 
 type Model interface {

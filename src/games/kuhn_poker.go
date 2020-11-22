@@ -5,7 +5,7 @@ import (
 	"math/rand"
 	"strings"
 
-	"github.com/aidoraide/cfr/src/algo"
+	"github.com/aidoraide/go-cfr/src/algo"
 )
 
 type kuhnCard = int32

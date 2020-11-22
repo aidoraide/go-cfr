@@ -1,7 +1,7 @@
 package algo
 
 import (
-	"github.com/aidoraide/cfr/src/util"
+	"github.com/aidoraide/go-cfr/src/util"
 )
 
 type Infoset struct {

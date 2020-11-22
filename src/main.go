@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/aidoraide/cfr/src/algo"
-	"github.com/aidoraide/cfr/src/games/dudo"
+	"github.com/aidoraide/go-cfr/src/algo"
+	"github.com/aidoraide/go-cfr/src/games/dudo"
 )
 
 var PrintIter = 1000000

@@ -3,8 +3,8 @@ package dudo
 import (
 	"math/rand"
 
-	"github.com/aidoraide/cfr/src/algo"
-	"github.com/aidoraide/cfr/src/util"
+	"github.com/aidoraide/go-cfr/src/algo"
+	"github.com/aidoraide/go-cfr/src/util"
 )
 
 var P1OptimalUtility = -7.0 / 258.0

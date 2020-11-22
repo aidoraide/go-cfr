@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/aidoraide/cfr/src/algo"
+	"github.com/aidoraide/go-cfr/src/algo"
 )
 
 type dudoHistory struct {
